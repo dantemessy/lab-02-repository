@@ -29,12 +29,11 @@ $('document').ready(function(){
     renderClone.find('h1').text(this.title);
     renderClone.find('img').attr('src', this.image_url);
     renderClone.find('p').text(this.description);
+    renderClone.addClass(this.keyword);
+
     $('#photo').append(renderClone);
 
 
-    let renderOp = $(`<option> ${this.keyword} </option>`)
-    renderOp.html();
-    $('#select').append(renderOp);
     // renderOp.find('option').text(this.keyword);
     // let renderOp = $(`<option> ${this.keyword} </option>`)
   };
@@ -43,12 +42,30 @@ $('document').ready(function(){
   //read the data from the json file ;
   $.get('/data/page-1.json')
     .then( (data) => {
+
+      let seen = [] ;
+
       data.forEach((photo) => {
         let pic = new Pic(photo);
-
         pic.render();
+
+        if ( !seen.includes(photo.keyword)){
+        let renderOp = $(`<option value = ${photo.keyword}> ${photo.keyword} </option>`)
+        seen.push(photo.keyword);
+        renderOp.html();
+        $('#select').append(renderOp);
+        }
+
       });
     });
+
+    $('#select').on('change', (work) => {
+      let optionEl = work.target.value ;
+      $('div').hide();
+      $(`.${optionEl}`).fadeIn(500);
+      console.log(optionEl);
+
+    })
 
 
 });
